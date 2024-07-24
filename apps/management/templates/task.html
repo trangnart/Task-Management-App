@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<head>
+  <base href="[[=URL('static')]]/">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="shortcut icon" href="data:image/x-icon;base64,AAABAAEAAQEAAAEAIAAwAAAAFgAAACgAAAABAAAAAgAAAAEAIAAAAAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAPAAAAAA=="/>
+  <link rel="stylesheet" href="css/no.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.14.0/css/all.min.css" integrity="sha512-1PKOgIY59xJ8Co8+NE6FZ+LOAZKjy+KY8iq0G4B3CyeY6wYHN3yt9PW0XpSriVlkMXe40PTKnXrLnZ9+fkDaog==" crossorigin="anonymous" />
+  <style>.py4web-validation-error{margin-top:-16px; font-size:0.8em;color:red}</style>
+  [[block page_head]]<!-- individual pages can customize header here -->[[end]]
+</head>
+<header>
+  <!-- Navigation bar -->
+  <nav class="black">
+    <!-- Logo -->
+    <a href="[[=URL('index')]]">
+      <b>py4web <script>document.write(window.location.href.split('/')[3]);</script></b>
+    </a>
+    <!-- Do not touch this -->
+    <label for="hamburger">☰</label>
+    <input type="checkbox" id="hamburger">
+    <!-- Left menu ul/li -->
+    [[block page_left_menu]][[end]]
+    <!-- Right menu ul/li -->
+    <ul>
+      [[if globals().get('user'):]]
+      <li>
+        <a class="navbar-link is-primary">
+          [[=globals().get('user',{}).get('email')]]
+        </a>
+        <ul>
+          <li><a href="[[=URL('auth/profile')]]">Edit Profile</a></li>
+          <li><a href="[[=URL('auth/change_password')]]">Change Password</a></li>
+          <li><a href="[[=URL('auth/logout')]]">Logout</a></li>
+        </ul>
+      </li>
+      [[else:]]
+      <li>
+        Login
+        <ul>
+          <li><a href="[[=URL('auth/register')]]">Sign up</a></li>
+          <li><a href="[[=URL('auth/login')]]">Log in</a></li>
+        </ul>
+      </li>
+      [[pass]]
+    </ul>
+  </nav>
+</header>
+<html>
+
+  <!-- MANAGER SELECTION -->
+  
+  <div class="section">
+    [[if role == 'CEO':]]
+      <p>You are the CEO</p>
+    [[else:]]
+    <form action="[[=URL('tasks/update_manager')]]" method="post">
+      <input type="hidden" name="user_id" value="[[=globals().get('user',{}).get('id')]]">
+      <div class="field">
+        <label class="label">Select Manager:</label>
+        <div class="control">
+          <div class="select">
+            <select name="manager">
+              [[for email in emails:]]
+              <option value="[[=email]]" [[='selected' if email == managed_by else '']]>[[=email]]</option>
+              [[pass]]
+            </select>
+          </div>
+        </div>
+      </div>
+      <div class="field">
+        <div class="control">
+          <button type="submit" class="button is-info">Update Manager</button>
+        </div>
+      </div>
+    </form>
+    [[pass]]
+  </div>
+
+  <div class="section">
+    <a class="button is-info" href="[[=URL('tasks/create')]]">New Task</a>
+  </div>
+  <head>
+      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.9.3/css/bulma.min.css">
+  </head>
+  <div class="section">
+    [[if 'form' in globals():]]
+        [[=form]]
+    [[else:]]
+        [[=grid]]
+    [[pass]]
+  </div>
+</html>
+
+<footer class="black padded">
+  <p>
+    Made with py4web
+  </p>
+</footer>

@@ -1,0 +1,15 @@
+import sys
+import os
+
+# Add the parent directory to the sys.path
+
+from common import db
+
+# Alter table to add 'priority' field
+try:
+    db.executesql('ALTER TABLE tasks ADD COLUMN priority STRING;')
+    print("Column 'priority' added successfully.")
+except Exception as e:
+    print(f"Error adding column 'priority': {e}")
+
+db.commit()

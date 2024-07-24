@@ -1,0 +1,67 @@
+[[extend "layout.html"]]
+<style>
+  .auth-container {
+    max-width: 80%;
+    min-width: 400px;
+    margin-left: auto;
+    margin-right: auto;
+    border: 1px solid #e1e1e1;
+    border-radius: 10px;
+    padding: 20px;
+  }
+</style>
+ <!-- Style REF- https://www.w3schools.com/html/html_tables.asp -->
+<style>
+  table {
+    font-family: arial, sans-serif;
+    border-collapse: collapse;
+    width: 100%;
+  }
+  
+  td, th {
+    border: 1px solid #dddddd;
+    text-align: left;
+    padding: 8px;
+  }
+  
+  tr:nth-child(even) {
+    background-color: #dddddd;
+  }
+  </style>
+
+<div class="heading">
+  <h3>To set your manager, please click the link corresponding to the correct person you'd like to set as your manager</h3>
+</div>
+
+<br>
+<br>
+
+<div class="auth-container">
+Organization:
+  <table>
+    <tr>
+      <!-- <th>User ID</th> -->
+      <th>First Name</th>
+      <th>Last Name</th>
+      <th>User Name</th>
+      <th>Link</th>
+    </tr>
+    [[for row in rows:]]
+    <tr>
+      <!-- <td>[[=row.id]]</td> -->
+      <td>[[=row.first_name]]</td>
+      <td>[[=row.last_name]]</td>
+      <td>[[=row.username]]</td>
+      <td><a href="../api/editManager/[[=row.id]]">Set as my manager</a></td>
+    </tr>
+    [[pass]]
+  </table>
+</div>
+
+<!-- <div class="auth-container">
+  [[=form]]
+</div> -->
+
+
+
+

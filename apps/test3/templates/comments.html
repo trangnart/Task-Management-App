@@ -1,0 +1,15 @@
+<div>
+  <h3>Comments</h3>
+  <ul>
+    <li v-for="comment in comments[task.task.id]" :key="comment.id">
+      <b>Posted by: {{ users.find(item => item.id === comment.signature).first_name }} 
+        {{ users.find(item => item.id === comment.signature).last_name }}
+        ({{ users.find(item => item.id === comment.signature).username}}) 
+      </b>
+      <br>
+      {{ comment.comment }} 
+    </li>
+  </ul>
+  <textarea v-model="new_comment[task.task.id]" placeholder="Add a comment"></textarea>
+  <button v-on:click="add_comment(task.task.id)">Add Comment</button>
+</div>

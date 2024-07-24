@@ -1,0 +1,92 @@
+
+[[extend "layout.html"]]
+
+<h2>Comments for Task: [[=task.title]]</h2>
+
+<div class="section">
+  <a href="[[=URL('tasks')]]" class="button is-primary">Back to Tasks</a>
+</div>
+
+<div id="comments-section">
+  <div class="section">
+    <form>
+      <div class="field">
+        <div class="control">
+          <textarea id="comment-input" class="textarea" placeholder="Enter your comment" required></textarea>
+        </div>
+      </div>
+      <div class="field">
+        <div class="control">
+          <button type="button" class="button is-primary" onclick="addComment()">Submit Comment</button>
+        </div>
+      </div>
+    </form>
+  </div>
+
+  <div class="section">
+    <h3>Comments:</h3>
+    <div id="new-comment"></div>
+    [[for comment in comments:]]
+    <div class="box">
+      <article class="media">
+        <div class="media-content">
+          <div class="content">
+            <p>
+              <strong>[[=comment.auth_user.first_name]] [[=comment.auth_user.last_name]]</strong>
+              <small>[[=comment.comment.created_on.strftime('%Y-%m-%d %H:%M:%S') if hasattr(comment.comment, 'created_on') else '']]</small>
+              <br>
+              [[=comment.comment.description]]
+            </p>
+          </div>
+        </div>
+      </article>
+    </div>
+    [[pass]]
+  </div>
+</div>
+
+<script>
+  function addComment() {
+    var commentInput = document.getElementById('comment-input');
+    var newCommentDiv = document.getElementById('new-comment');
+    var commentText = commentInput.value;
+
+    if (commentText.trim() !== '') {
+      // Send AJAX request to the server
+      fetch("[[=URL('tasks/add_comment', task.id)]]", {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ description: commentText }),
+      })
+      .then(response => response.json())
+      .then(data => {
+        if (data.success) {
+          var newComment = document.createElement('div');
+          newComment.className = 'box';
+          newComment.innerHTML = `
+            <article class="media">
+              <div class="media-content">
+                <div class="content">
+                  <p>
+                    <strong>${data.comment.user_name}</strong>
+                    <small>${data.comment.created_on}</small>
+                    <br>
+                    ${data.comment.description}
+                  </p>
+                </div>
+              </div>
+            </article>
+          `;
+
+          newCommentDiv.appendChild(newComment);
+          commentInput.value = '';
+        }
+      })
+      .catch(error => {
+        console.error('Error:', error);
+      });
+    }
+  }
+</script>

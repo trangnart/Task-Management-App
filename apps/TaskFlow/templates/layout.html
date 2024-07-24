@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <base href="[[=URL('static')]]/">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="css/no.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.14.0/css/all.min.css" integrity="sha512-1PKOgIY59xJ8Co8+NE6FZ+LOAZKjy+KY8iq0G4B3CyeY6wYHN3yt9PW0XpSriVlkMXe40PTKnXrLnZ9+fkDaog==" crossorigin="anonymous" />
+  <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    body, html {
+      margin: 0;
+      padding: 0;
+      font-family: 'Roboto', sans-serif;
+      background-color: #f0f0f0;
+    }
+
+    .container {
+      display: flex;
+      height: calc(100vh - 60px); /* Adjust for header height */
+      width: 100%;
+    }
+    .column {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 20px;
+    }
+    .left-column {
+      position: relative;
+      background: linear-gradient(135deg, #ece9e6, #ffffff);
+      width: 40%;
+      padding: 20px;
+    }
+    .right-column {
+      position: relative;
+      width: 60%;
+      background-image: url('uploads/team.png');
+      background-repeat: no-repeat;
+      background-size: cover;
+      background-position: top;
+      opacity: 0.5;
+    }
+    .overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(255, 255, 255, 0.8);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+    .navbar-logo {
+      position: relative;
+      top: 20px;
+      left: 20px;
+      height: 280px;
+      transition: transform 0.3s;
+    }
+    @media (min-width: 768px) {
+      .navbar-logo {
+        height: 300px;
+      }
+    }
+    .navbar-logo:hover {
+      transform: scale(1.1);
+    }
+    .welcome-heading {
+      font-family: 'Dancing Script', cursive;
+      font-size: 2.8em;
+      line-height: 1.2;
+      color: #333;
+      margin: 0 20px 20px;
+    }
+
+    .signup-link, .forgot-password-link {
+      margin-top: 10px;
+      display: block;
+      text-align: center;
+      color: black;
+      text-decoration: none;
+      transition: color 0.3s;
+    }
+    .signup-link:hover, .forgot-password-link:hover {
+      color: #555;
+      text-decoration: underline;
+    }
+    .feed-container {
+      max-width: 80%;
+      min-width: 400px;
+      margin-left: auto;
+      margin-right: auto;
+      border: 1px solid #e1e1e1;
+      border-radius: 10px;
+      padding: 20px;
+      background-color: white;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <div class="left-column column">
+      <div class="overlay">
+        <img src="uploads/logo.png" alt="TaskFlow Logo" style="max-width: 100px;"> 
+        <h2 class="welcome-heading">Welcome to TaskFlow</h2>
+
+      </div>
+    </div>
+    <div class="right-column column">
+      <!-- Right column content can be added here -->
+  
+        [[include]]
+
+       <!-- Start of the login box -->
+       <div class="right-column column">
+        <button class="login-button" onclick="location.href='[[=URL('auth/login')]]'">Login</button>
+        <a href="[[=URL('auth/register')]]" class="auth-link">Signup</a>
+        <a href="[[=URL('auth/request_reset_password')]]" class="auth-link">Forgot Password?</a>
+        <a href="[[=URL('auth/logout')]]" class="auth-link">Logout?</a>
+      </div>
+  </div>
+  <script src="https://cdn.jsdelivr.net/npm/vue@2.6.14/dist/vue.js"></script>
+  <script src="https://unpkg.com/vue@next"></script>
+  <script src="js/utils.js"></script> <!-- Include utils.js here -->
+  <script src="/TaskFlow/static/js/vue.min.js"></script>
+  <script type="module" src="js/index.js"></script>
+  [[block page_scripts]]<!-- individual pages can add scripts here -->[[end]]
+</body>
+</html>

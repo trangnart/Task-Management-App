@@ -1,0 +1,104 @@
+[[extend 'layout.html']]
+
+<div id="py4web-flash"></div>
+<div id="app">
+  <h2>Create a new task</h2>
+  <p>All FIELDS ARE REQUIRED</p>
+  <section>
+    <input placeholder="title*" v-model="new_task.title"/>
+    <textarea placeholder="description*"  v-model="new_task.description"></textarea>
+    Status*: 
+    <select v-model="new_task.status">
+      <option selected value="pending">Pending</option>
+      <option value="acknowledged">Acknowledged</option>
+      <option value="rejected">Rejected</option>
+      <option value="completed">Completed</option>
+      <option value="failed">Failed</option>
+    </select>
+    Deadline*:
+    <input type="date" v-model="new_task.deadline"/>
+    <button v-on:click="create_new_task()">Create a new Task</button>
+  </section>
+  
+  <div class="sidebar" id="filterSidebar">
+    <section>
+      <a href="javascript:void(0)" class="closebtn" onclick="hide()">×</a>
+      <h3>FILTER BY</h3>
+      <p>(if options are not loading, press "Show filtered tasks" to load)</p>
+
+        <p>Date Created:</p>
+          <input type="date" v-model="filter_created_on"/>
+
+        Deadline:
+          <input type="date" v-model="filter_deadline"/>
+
+        Status:
+          <select v-model="filter_status">
+            <option selected value="undefined">Choose Option</option>
+            <option value="pending">Pending</option>
+            <option value="acknowledged">Acknowledged</option>
+            <option value="rejected">Rejected</option>
+            <option value="completed">Completed</option>
+            <option value="failed">Failed</option>
+          </select>
+
+          Created by:
+          <select v-model="filter_createdBy">
+            <option selected value="undefined">Choose Option</option>
+            <option v-for="user in users" :value="user.id"> {{user.first_name}} {{user.last_name}} ({{user.username}})</option>
+          </select>
+
+          Assigned to:
+          <select v-model="filter_assignedTo">
+            <option selected value="undefined">Choose Option</option>
+            <option v-for="user in users" :value="user.id"> {{user.first_name}} {{user.last_name}} ({{user.username}})</option>
+          </select>
+        
+          Created By My Managed Users:
+          <input type="checkbox" id="checkbox" v-model="filter_createdByManagedUsers" />
+          <br>
+
+          Assigned To My Managed Users:
+          <input type="checkbox" id="checkbox" v-model="filter_assignedToManagedUsers" />
+          <br>
+
+          <button v-on:click="show_filtered_tasks()">Show filtered tasks</button>
+
+      </section>
+
+  </div>
+
+  <br>
+  <br>
+  <button id="openbtn" onclick="show()">Filtering Options</button>
+
+
+  
+  <div class="section" v-for="task in tasks">
+    <div class="taskBody">
+      <h2>{{task.task.title}}</h2>
+      <p><small><a :href=" '/task_mgmt/api/viewTask/' + task.task.id ">View/Edit Task</a></small></p>
+      <p> <b>Created on:</b> {{task.task.created_on}}</p>
+      <p><b>Deadline:</b> {{task.task.deadline}}</p>
+      <p><b>Assigned To:</b> {{task.auth_user.first_name}} {{task.auth_user.last_name}}  ({{task.auth_user.username}})</p> 
+      <p><b>Status:</b> {{task.task.status}}</p>
+      <p><b>Description: </b>{{task.task.description}}</p>
+      [[extend 'comments.html']]
+    </div>
+  </div>
+</div>
+
+[[block page_scripts]]
+<script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.6.8/axios.min.js"></script>
+<script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+<script src="[[=URL('static/js/custom.js')]]"></script>
+<script>
+  function show() {
+     document.getElementById("filterSidebar").style.width = "450px";
+  }
+
+  function hide() {
+     document.getElementById("filterSidebar").style.width = "0";
+  }
+  </script>
+[[end]]

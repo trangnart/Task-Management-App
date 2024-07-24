@@ -1,0 +1,239 @@
+
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f9;
+    margin: 0;
+    padding: 0;
+}
+
+header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #f8f8f8;
+    padding: 10px 20px;
+    border-bottom: 1px solid #e7e7e7;
+}
+
+.logo img {
+    height: 40px;
+}
+
+.dropdown {
+    position: relative;
+    display: inline-block;
+}
+
+.dropbtn {
+    background-color: #4CAF50;
+    color: white;
+    padding: 10px;
+    font-size: 16px;
+    border: none;
+    cursor: pointer;
+    text-align: center;
+    vertical-align: middle;
+    line-height: normal;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.dropdown-content {
+    display: none;
+    position: absolute;
+    background-color: #f1f1f1;
+    min-width: 160px;
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+    z-index: 1;
+}
+
+.dropdown-content a {
+    color: black;
+    padding: 12px 16px;
+    text-decoration: none;
+    display: block;
+    text-align: center;
+}
+
+.dropdown-content a:hover {
+    background-color: #ddd;
+}
+
+.show {
+    display: block;
+}
+
+#app {
+    margin: 20px;
+}
+
+.task-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+}
+
+.task-form,
+.task-edit-form {
+    border: 1px solid #ccc;
+    padding: 20px;
+    border-radius: 5px;
+    background-color: #f9f9f9;
+    margin-bottom: 20px;
+    width: 45%;  /* Adjusted width to make room for the change manager section */
+    margin-left: 0;  /* Align the box to the left */
+}
+
+.change-manager {
+    border: 1px solid #ccc;
+    padding: 20px;
+    border-radius: 5px;
+    background-color: #f9f9f9;
+    width: 45%;  /* Adjusted width to fit beside the task form */
+}
+
+.task-form input,
+.task-form textarea,
+.task-form select,
+.task-edit-form input,
+.task-edit-form textarea,
+.task-edit-form select,
+.change-manager select {
+    display: block;
+    width: calc(100% - 22px);  /* Adjust width to account for padding and border */
+    margin-bottom: 10px;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+}
+
+.task-form button,
+.task-edit-form button,
+.change-manager button {
+    background-color: #4CAF50;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    text-align: center;
+    vertical-align: middle;
+    line-height: normal;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.task-form button:hover,
+.task-edit-form button:hover,
+.change-manager button:hover {
+    background-color: #45a049;
+}
+
+.popup-modal {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: fixed;
+    z-index: 1;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0,0,0,0.4);
+}
+
+.popup-content {
+    background-color: #fff;
+    margin: auto;
+    padding: 20px;
+    border: 1px solid #888;
+    width: 80%;
+    max-width: 500px;
+    border-radius: 5px;
+    text-align: center;
+}
+
+.close {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+    }
+    
+    .close:hover,
+    .close:focus {
+    color: black;
+    text-decoration: none;
+    cursor: pointer;
+    }
+    
+    table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+    }
+    
+    table, th, td {
+    border: 1px solid #ddd;
+    }
+    
+    th, td {
+    padding: 10px;
+    text-align: left;
+    }
+    
+    th {
+    background-color: #f2f2f2;
+    }
+
+    /* Filter Section */
+.filter-section {
+    border: 1px solid #ccc;
+    padding: 20px;
+    border-radius: 5px;
+    background-color: #f9f9f9;
+    margin-bottom: 20px;
+    width: 100%;
+  }
+  
+  .filter-section label {
+    margin-right: 10px;
+  }
+  
+  .filter-section button {
+    margin-top: 10px;
+    background-color: #0074d9;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    padding: 8px 16px;
+  }
+
+  /* CSS for the dropdown */
+  .dropdown-menu {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    background-color: #fff;
+    border: 1px solid #ccc;
+    border-radius: 3px;
+    display: none;
+  }
+  
+  .show-status-dropdown .dropdown-menu {
+    display: block;
+  }
+  .small-label {
+    font-size: 0.100em; /* Adjust the font size as needed */
+  }
+
+
+  .filters div {
+    display: inline-block;
+    margin-right: 10px;
+  }

@@ -1,0 +1,650 @@
+[[extend 'layout.html']]
+
+<!-- CITIATION -->
+<!-- Icons: https://fontawesome.com/icons -->
+ <!-- Status dropdown menu - bulma documnetation -->
+
+<!--CSS ~ Style ~ Bulma-->
+<link
+  rel="stylesheet"
+  href="https://cdn.jsdelivr.net/npm/bulma@0.9.3/css/bulma.min.css"
+/>
+
+<style>
+  /* Here is the CSS for layout of the page  */
+  .columns {
+    margin-top: 10px;
+  }
+  /* Here is the CSS for the logo  */
+  .logo {
+    margin-left: auto;
+    margin-right: auto;
+    display: block;
+    width: 350px;
+    height: auto;
+  }
+
+  /* Here is the CSS for the logo section  */
+  .logo_section {
+    padding-top: 0px;
+  }
+
+  /* Here is the CSS for the filter buttons section */
+  .button_container {
+    padding-top: 15px;
+  }
+  .button {
+    font-weight: bold;
+  }
+
+  /* Here is the CSS for the form section to add a task */
+  .form_column {
+    background-color: rgb(236, 247, 255);
+    margin-right: 120px;
+  }
+
+  .task_content {
+    padding-top: 10px;
+    background-color: #fcfdff;
+  }
+
+  .title_form {
+    background-color: #fcfdff !important;
+  }
+
+  /* Here is the CSS for the Form to add tasks */
+  .task_item {
+    background-color: #fcfdff;
+    width: 100%;
+    height: 100px;
+    border-radius: 10px;
+    border: 1px solid #88909c;
+  }
+
+  /* Here is the CSS for the tasks themselves + comment section */
+  .box {
+    margin-top: 20px;
+    background-color: rgb(198, 215, 248);
+  }
+
+  .box-comment {
+    margin-top: 20px;
+    padding: 10px;
+    background-color: rgb(232, 240, 255); 
+    border-radius: 10px;
+  }
+
+  .task_button {
+    margin-top: 20px;
+    margin-left: 0px;
+    margin-bottom: 20px;
+  }
+
+  .task_button .button {
+    margin-left: 10px;
+  }
+  
+</style>
+
+<div id="app">
+  <!-- Logo Placemenet -->
+  <section class="logo_section">
+    <div class="container logo">
+      <img src="media/new_logo.gif" class="logo" />
+    </div>
+  </section>
+
+  <!-- Left-Hand Column (for Task Form) -->
+  <div class="columns is-centered">
+    <div class="column is-three-fifths">
+      
+      <!-- Manager Selection -->
+      <div class="buttons">
+        <span class="icon-text">
+          <span class="icon">
+            <i class="fas fa-users fa-2x"></i>
+          </span>
+          <span class="has-text-weight-bold ml-4 is-size-4 mb-3">Manager:</span>
+        </span>
+        <div class="dropdown" v-bind:class="{ 'is-active': manager_dropdown }">
+          <div class="dropdown-trigger">
+            <button
+              class="button ml-2"
+              aria-haspopup="true"
+              aria-controls="dropdown-menu3"
+              v-on:click="manager_dropdown = !manager_dropdown"
+            >
+              <span v-if="!manager">Select your Manager</span>
+              <span v-else>{{users[manager - 1].username}}</span>
+              <span class="icon is-small">
+                <i class="fas fa-angle-down" aria-hidden="true"></i>
+              </span>
+            </button>
+          </div>
+          <div class="dropdown-menu" id="dropdown-menu3" role="menu">
+            <div class="dropdown-content" v-for="user in users">
+              <a
+                class="dropdown-item"
+                v-on:click="manager_dropdown = !manager_dropdown; post_manager(current_user.id, user.id); reload();"
+              >
+                {{user.first_name}} {{user.last_name}} ({{user.username}})
+              </a>
+            </div>
+          </div>
+        </div>
+        <div class="button is-small is-danger is-light ml-1" v-on:click="post_manager(current_user.id, 'reset'); reload();">
+          Reset
+        </div>
+      </div>
+
+
+      <!-- FORM FOR CREATING TASKS -->
+      <div class="box">
+
+        <!-- Inputting title of task -->
+        <div class="field">
+          <label class="label is-size-5 is-family-monospace">Task Title</label>
+          <div class="control">
+            <input
+              class="input title_form"
+              type="text"
+              placeholder="INSERT TITLE HERE"
+              v-model="new_task.title"
+            />
+          </div>
+        </div>
+
+        <!-- Inputting description of task -->
+        <div class="field">
+          <label class="label is-size-5 is-family-monospace">Description</label>
+          <div class="control">
+            <textarea
+              class="input task_content"
+              type="text"
+              placeholder="INSERT DESCRIPTION HERE"
+              v-model="new_task.description"
+            ></textarea>
+          </div>
+        </div>
+
+        <!-- Selecting Status of Task -->
+        <div class="field">
+          <label class="label is-size-5 is-family-monospace">Status</label>
+          <div class="control">
+            <div class="select">
+              <select v-model="new_task.status">
+                <option value="" disabled selected>Select Status</option>
+                <option>Pending</option>
+                <option>Acknowledged</option>
+                <option>Rejected</option>
+                <option>Completed</option>
+                <option>Failed</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <!-- Inputting deadline for task -->
+        <div class="field">
+          <label class="label is-size-5 is-family-monospace">Deadline</label>
+          <div class="control">
+            <input
+              class="input title_form"
+              type="text"
+              placeholder="YYYY-MM-DD"
+              v-model="new_task.deadline"
+            />
+          </div>
+        </div>
+
+        <!-- Inputting assignee for task -->
+        <div class="field">
+          <label class="label is-size-5 is-family-monospace">Assigned To</label>
+          <div class="control">
+            <input
+              class="input title_form"
+              type="text"
+              placeholder="user email address"
+              v-model="new_task.assigned_to"
+            />
+          </div>
+        </div>
+
+        <!-- Now adding task -->
+        <div class="field">
+          <div class="control has-text-right">
+            <button
+              class="button is-link is-light is-rounded is-outlined submit_task"
+              v-on:click="add_task()"
+            >
+              <span class="icon is-small">
+                <i class="fas fa-plus"></i>
+              </span>
+              <span>ADD TASK</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+  <!-- Right-Hand Column (for filter buttons + posting of task) -->
+    <div class="column is-four-fifths filter_column">
+      <!-- FILTER BUTTONS -->
+
+      <span class="icon-text">
+          <span class="icon">
+            <i class="fas fa-sort-amount-down fa-2x"></i>
+          </span>
+          <span class="has-text-weight-bold ml-4 is-size-4">Filter By:</span>
+        </span> <br />
+    
+      <!-- Status dropdown filter button -->
+      <div class="button_container buttons ">
+        <div
+          class="dropdown mr-2"
+          v-bind:class="{ 'is-active': status_dropdown }"
+        >
+          <div class="dropdown-trigger">
+            <button
+              class="button is-link is-light"
+              aria-haspopup="true"
+              aria-controls="dropdown-menu3"
+              v-on:click="status_dropdown = !status_dropdown"
+            >
+              <span>Status</span>
+              <span class="icon is-small">
+                <i class="fas fa-angle-down" aria-hidden="true"></i>
+              </span>
+            </button>
+          </div>
+          <div class="dropdown-menu" id="dropdown-menu3" role="menu">
+            <div class="dropdown-content">
+              <!-- The different status types -->
+              <a
+                class="dropdown-item"
+                v-on:click="filters.status = ''; status_dropdown = !status_dropdown; reload();"
+              >
+                Status
+              </a>
+              <hr class="dropdown-divider" />
+              <a
+                class="dropdown-item"
+                v-on:click="filters.status = 'Pending'; status_dropdown = !status_dropdown; reload();"
+              >
+                Pending
+              </a>
+              <a
+                class="dropdown-item"
+                v-on:click="filters.status = 'Acknowledged'; status_dropdown = !status_dropdown; reload();"
+              >
+                Acknowledged
+              </a>
+              <a
+                class="dropdown-item"
+                v-on:click="filters.status = 'Rejected'; status_dropdown = !status_dropdown; reload();"
+              >
+                Rejected
+              </a>
+              <a
+                class="dropdown-item"
+                v-on:click="filters.status = 'Completed'; status_dropdown = !status_dropdown; reload();"
+              >
+                Completed
+              </a>
+              <a
+                class="dropdown-item"
+                v-on:click="filters.status = 'Failed'; status_dropdown = !status_dropdown; reload();"
+              >
+                Failed
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <!-- Date Created By filter button -->
+        <div
+          class="dropdown mr-2"
+          v-bind:class="{ 'is-active': created_dropdown }"
+        >
+          <div class="dropdown-trigger">
+            <button
+              class="button is-link is-light"
+              aria-haspopup="true"
+              aria-controls="dropdown-menu3"
+              v-on:click="created_dropdown = !created_dropdown"
+            >
+              <span>Date Created</span>
+              <span class="icon is-small">
+                <i class="fas fa-angle-down" aria-hidden="true"></i>
+              </span>
+            </button>
+          </div>
+          <div class="dropdown-menu" id="dropdown-menu3" role="menu">
+            <div class="dropdown-content">
+              <div class="dropdown-item">
+                <input placeholder="MM-DD-YYYY" v-model="filters.created_on">
+                <button 
+                  class="button is-link is-light is-small" v-on:click="created_dropdown = !created_dropdown; reload();">
+                  Filter
+                </button>
+                <button 
+                  class="button is-link is-light is-small" v-on:click="filters.created_on = ''; reload();">
+                  Reset
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Deadline filter button -->
+        <div
+          class="dropdown mr-2"
+          v-bind:class="{ 'is-active': deadline_dropdown }"
+        >
+          <div class="dropdown-trigger">
+            <button
+              class="button is-link is-light"
+              aria-haspopup="true"
+              aria-controls="dropdown-menu3"
+              v-on:click="deadline_dropdown = !deadline_dropdown"
+            >
+              <span>Deadline</span>
+              <span class="icon is-small">
+                <i class="fas fa-angle-down" aria-hidden="true"></i>
+              </span>
+            </button>
+          </div>
+          <div class="dropdown-menu" id="dropdown-menu3" role="menu">
+            <div class="dropdown-content">
+              <div class="dropdown-item">
+                <input placeholder="MM-DD-YYYY" v-model="filters.deadline">
+                <button 
+                  class="button is-link is-light is-small" v-on:click="deadline_dropdown = !deadline_dropdown; reload();">
+                  Filter
+                </button>
+                <button 
+                  class="button is-link is-light is-small" v-on:click="filters.deadline = ''; reload();">
+                  Reset
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Created by Self filter button -->
+        <button
+          class="button is-link is-light"
+          v-if="filters.created_by === ''"
+          v-on:click="filters.created_by = current_user.id; reload();"
+        >
+          Created by Self
+        </button>
+
+        <button
+          class="button is-link is-light"
+          v-else
+          v-on:click="filters.created_by = ''; reload();"
+        >
+          Created by Self
+        </button>
+
+        <!-- Assigned to self filter button -->
+        <button
+          class="button is-link is-light"
+          v-if="filters.assigned_to === ''"
+          v-on:click="filters.assigned_to = current_user.email; reload();"
+        >
+          Assigned to Self
+        </button>
+
+        <button
+          class="button is-link is-light"
+          v-else
+          v-on:click="filters.assigned_to = ''; reload();"
+        >
+          Assigned to Self
+        </button>
+
+        <!-- Dropdown for Created by a Specific User -->
+        <div
+          class="dropdown mr-2"
+          v-bind:class="{ 'is-active': created_by_dropdown }"
+        >
+          <div class="dropdown-trigger">
+            <button
+              class="button is-link is-light"
+              aria-haspopup="true"
+              aria-controls="dropdown-menu3"
+              v-on:click="created_by_dropdown = !created_by_dropdown"
+            >
+              <span>Created by</span>
+              <span class="icon is-small">
+                <i class="fas fa-angle-down" aria-hidden="true"></i>
+              </span>
+            </button>
+          </div>
+          <div class="dropdown-menu" id="dropdown-menu3" role="menu">
+            <div class="dropdown-content" v-for="user in users">
+              <a
+                class="dropdown-item"
+                v-if="filters.created_by === user.id"
+                v-on:click="filters.created_by = ''
+                created_by_dropdown = !created_by_dropdown
+                reload();"
+              >
+                {{user.first_name}} {{user.last_name}} ({{user.username}})
+              </a>
+              <a
+                class="dropdown-item"
+                v-else
+                v-on:click="filters.created_by = user.id; 
+                created_by_dropdown = !created_by_dropdown;
+                reload();"
+              >
+                {{user.first_name}} {{user.last_name}} ({{user.username}})
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <!-- Assigned to a Specific User dropdown filter button-->
+        <div
+          class="dropdown mr-2"
+          v-bind:class="{ 'is-active': assigned_to_dropdown }"
+        >
+          <div class="dropdown-trigger">
+            <button
+              class="button is-link is-light"
+              aria-haspopup="true"
+              aria-controls="dropdown-menu3"
+              v-on:click="assigned_to_dropdown = !assigned_to_dropdown"
+            >
+              <span>Assigned to</span>
+              <span class="icon is-small">
+                <i class="fas fa-angle-down" aria-hidden="true"></i>
+              </span>
+            </button>
+          </div>
+          <div class="dropdown-menu" id="dropdown-menu3" role="menu">
+            <div class="dropdown-content" v-for="user in users">
+              <a
+                class="dropdown-item"
+                v-if="filters.assigned_to === user.email"
+                v-on:click="filters.assigned_to = '';
+                assigned_to_dropdown = !assigned_to_dropdown;
+                reload();"
+              >
+                {{user.first_name}} {{user.last_name}} ({{user.username}})
+              </a>
+              <a
+                class="dropdown-item"
+                v-else
+                v-on:click="filters.assigned_to = user.email;
+                assigned_to_dropdown = !assigned_to_dropdown;
+                reload();"
+              >
+                {{user.first_name}} {{user.last_name}} ({{user.username}})
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- TASK LAYOUT -->
+
+      <!-- This here is the assigned task layout -->
+      <div class="task_feed">
+        <div v-for="task in tasks">
+          <div class="box">
+            <div class="card">
+              <!-- Title Field -->
+              <p class="title is-6 pl-3 pt-3 pb-3 pr-6 is-family-monospace has-text-weight-bold">
+                <input
+                  class="input"
+                  type="text"
+                  v-bind:readonly="editing.current!=task"
+                  v-model="task.title"
+                />
+              </p>
+              <!-- Status Field -->
+              <p class="subtitle is-6 pl-3 is-family-monospace"> 
+                <strong>Status:</strong>             
+                <div class="subtitle is-6 pl-3 is-family-monospace" >
+                  <div class="select">
+                    <select v-model="task.status" :disabled="editing.current != task">
+                      <option value="" disabled selected>Select Status</option>
+                      <option>Pending</option>
+                      <option>Acknowledged</option>
+                      <option>Rejected</option>
+                      <option>Completed</option>
+                      <option>Failed</option>
+                    </select>
+                  </div>
+                </div>
+              </p>
+              <!-- Deadline Field -->
+              <p class="subtitle is-6 pl-3 pr-6  is-family-monospace">
+                <strong>Deadline:</strong>
+                <input
+                  class="input size_input_deadline"
+                  type="text"
+                  v-bind:readonly="editing.current!=task"
+                  v-model="task.deadline"
+                />
+              </p>
+              <!-- Assigned To Field -->
+              <p class="subtitle is-6 pl-3 pr-6  is-family-monospace">
+                 <strong>Assigned To:</strong>
+                <input
+                  class="input size_input_assigned"
+                  type="text"
+                  v-bind:readonly="editing.current!=task"
+                  v-model="task.assigned_to"
+                />
+              </p>
+              <!-- Description Field -->              
+              <div class="card-content is-6 pl-3 pr-6 is-family-monospace">
+                <strong>Description:</strong>
+                <input
+                  class="input size_input_description"
+                  type="text"
+                  v-bind:readonly="editing.current!=task"
+                  v-model="task.description"
+                />
+                <!-- Created on/by Field -->
+                <div class="is-size-6 has-text-grey-light is-family-monospace">
+                  Created on: {{task.created_on}} Created by:
+                  {{users[task.created_by - 1].username}}
+                </div>
+
+                <!-- This here is the EDIT and DELETE button for an assigned task -->
+                <div class="task_button">
+                  <button
+                    class="button is-success is-light is-rounded is-outlined"
+                    v-bind:disabled="(task.created_by != current_user.id) && !(managed.includes(task.created_by))"
+                    v-if="editing.current!=task"
+                    v-on:click="edit(task)"
+                  >
+                   <!--Edit button-->
+                    <span class="icon is-small">
+                      <i class="fas fa-pencil-alt"></i>
+                    </span>
+                    <span>EDIT</span>
+                  </button>
+
+                  <!-- Cancel button -->
+                  <button
+                    class="button is-info"
+                    v-if="editing.current==task"
+                    v-on:click="cancel()"
+                  >
+                    CANCEL
+                  </button>
+
+                  <!-- Save button -->
+                  <button
+                    class="button is-info"
+                    v-if="editing.current==task"
+                    v-on:click="save(task)"
+                  >
+                    SAVE
+                  </button>
+                  
+                  <button
+                    class="button is-danger is-light is-rounded is-outlined"
+                    v-bind:disabled="(task.created_by != current_user.id) && !(managed.includes(task.created_by))"
+                    v-on:click="delete_task(task.id)"
+                  >
+
+                  <!-- Delete button -->
+                    <span class="icon is-small">
+                      <i class="fas fa-times"></i>
+                    </span>
+                    <span>DELETE</span>
+                  </button>
+                </div>
+
+                <input
+                  class="input is-small is-6 pl-3 pr-6 is-family-monospace"
+                  type="text"
+                  placeholder="Comment here"
+                  v-model="new_comment"
+
+                />
+                <!-- This here is the comment section for an assigned task -->
+                <div v-if="comments[task.id] && comments[task.id].length">
+                  <div v-for="comment in comments[task.id]" :key="comment.id" class="box-comment">
+                    <p>{{comment.content }}</p>
+                  </div>
+                </div>
+                <div v-else>
+                  <p>No comments yet</p>
+                </div>
+
+                
+                <!-- Post button for comment section -->
+                <p class="subtitle is-6 pl-3 mt-4 is-family-monospace">
+                  <button
+                    class="button is-primary is-light is-rounded is-outlined submit_task"
+                    v-on:click="add_comment(task.id)"
+                    v-if="editing.current!=task"
+                  >
+                    <span>POST</span>
+                  </button>
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    [[block page_scripts]]
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.6.8/axios.min.js"></script>
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <script src="[[=URL('static/js/custom.js')]]"></script>
+
+    [[end]]
+  </div>
+</div>

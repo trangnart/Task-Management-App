@@ -1,0 +1,26 @@
+[[extend 'layout.html']]
+
+<div id="app">
+  
+    <div ref="mainTask" class="section" v-for="task in tasks" :key="task.task.id">
+      <div class="taskBody" v-if="task.task.id == [[=task_id]]">
+        <h2>{{task.task.title}}</h2> 
+        <p v-if="[[=managedUsers]].includes(task.task.assigned_to)"><a :href=" '../api/tasks/edit/' + task.task.id ">Edit Task</a></p>
+        <p><b>Assigned To:</b> {{task.auth_user.first_name}} {{task.auth_user.last_name}}  ({{task.auth_user.username}})</p> 
+        <p> <b>Deadline:</b> {{task.task.deadline}}</p>
+        <p> <b>Status:</b> {{task.task.status}}</p>
+        <p> <b>Description</b>: {{task.task.description}}</p>
+        <p> [[extend 'comments.html']] </p>
+      </div>
+    </div>
+    <div class="section" style="color: red;" v-if="this.$refs.mainTask.innerText.trim()===''">
+      404 Task Not Found
+    </div>
+  </div>
+</div>
+
+[[block page_scripts]]
+<script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.6.8/axios.min.js"></script>
+<script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+<script src="[[=URL('static/js/custom.js')]]"></script>
+[[end]]
