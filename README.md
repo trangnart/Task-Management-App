@@ -1,4 +1,4 @@
-## Final Project
+## Final Project for Web Application (UCSC)
 
 The project consists of creating a task management app. Tasks have a title, a desciption, a signature (created_on, created_by), a deadline, and a status (pending, ackowledged, rejected, completed, failed). Task also have comments.
 
